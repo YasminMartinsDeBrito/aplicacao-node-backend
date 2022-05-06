@@ -1,58 +1,33 @@
 // mongodb+srv://YasminMartins:phoneky123@apicluster.atjp4.mongodb.net/bancodaapi?retryWrites=true&w=majority
-
-const USER = 'YasminMartins'
-const PASSWORD = encodeURIComponent('phoneky123')
+//  comecei 1:15
+require('dotenv').config()
 
 // configuração inicial
-
 const express = require('express')
 const mongoose = require('mongoose')
 const app = express()
-
-
-const Person = require('./models/Person')
 
 // forma de ler json / middlewares
 app.use(
     express.urlencoded({
         extended: true
     })
-)
-
-app.use(express.json())
-
-// rotas da api
-app.post('/person', async (req,res) => {
-    // req.body
-    const {name, salary, aprroved} = req.body
-
-    if(!name){
-        res.status(422).json({error: 'nome é obrigatório'})
-    }
-    const person = {
-        name, 
-        salary, 
-        approved,
-    }
-
-    // create mongosse
-    try{
-        // criando dados
-        await Person.create(person)
-
-        restart.status(201).json({msg:"pessoa inserido no sistema com sucesso"})
-
-    }catch(error){
-        res.status(500).json({error: error})
-    }
-})
-// rota inicial/ endpoint
+    )
+    app.use(express.json())
+    
+    // rotas da API
+    const personRoutes = require('./routes/personRoutes')
+    app.use('/person', personRoutes)
+    
+    // rota inicial/ endpoint
 app.get('/', (req,res) => {
 
     res.json({message: 'Oi express'})
 })
 
 // entregar porta ao express
+const USER = process.env.USER
+const PASSWORD = encodeURIComponent(process.env.PASSWORD)
 mongoose
     .connect(`mongodb+srv://${USER}:${PASSWORD}@apicluster.atjp4.mongodb.net/bancodaapi?retryWrites=true&w=majority`)
     .then(() => {
